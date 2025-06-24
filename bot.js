@@ -1,36 +1,36 @@
-const TelegramBot = require("node-telegram-bot-api");
 require("dotenv").config();
+const TelegramBot = require("node-telegram-bot-api");
 
-// Cria o bot
 const bot = new TelegramBot(process.env.TOKEN, { polling: true });
 
-// Comando /start
+// Menu principal
+const menuPrincipal = {
+  reply_markup: {
+    keyboard: [
+      [{ text: "📄 Sobre" }, { text: "💬 Contato" }],
+      [{ text: "🔙 Voltar" }],
+    ],
+    resize_keyboard: true,
+    one_time_keyboard: false,
+  },
+};
+
 bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const username = msg.from.first_name;
-
-  // Responde ao comando /start
-  bot.sendMessage(chatId, `Olá, ${username}! Eu sou um bot do Telegram.`);
+  bot.sendMessage(msg.chat.id, "Olá! Escolha uma opção:", menuPrincipal);
 });
 
-// Comando /ajuda
-bot.onText(/\/ajuda/, (msg) => {
-  const chatId = msg.chat.id;
-
-  // Responde ao comando /ajuda
-  bot.sendMessage(
-    chatId,
-    "Aqui está a ajuda: \n- Use /start para iniciar.\n- Use /ajuda para saber mais."
-  );
-});
-
-// Resposta a qualquer outra mensagem
 bot.on("message", (msg) => {
   const chatId = msg.chat.id;
-  const message = msg.text;
+  const texto = msg.text;
 
-  // Se não for um comando, responde com uma mensagem genérica
-  if (!message.startsWith("/")) {
-    bot.sendMessage(chatId, `Você disse: ${message}`);
+  if (texto === "📄 Sobre") {
+    bot.sendMessage(
+      chatId,
+      "🤖 Este é um bot de exemplo com menu feito em Node.js!"
+    );
+  } else if (texto === "💬 Contato") {
+    bot.sendMessage(chatId, "📧 Fale comigo em: contato@exemplo.com");
+  } else if (texto === "🔙 Voltar") {
+    bot.sendMessage(chatId, "Voltando ao menu principal...", menuPrincipal);
   }
 });
